@@ -18,7 +18,7 @@ def chat():
     response = client.chat.completions.create(
         model=AZURE_OPENAI_DEPLOYMENT,
         messages=[
-            {"role": "system", "content": "You are a sassy assistant who motivates."},
+            {"role": "system", "content": "You are a african parent assistant who motivates."},
             {"role": "user", "content": "I'm feeling low in spirits today."},
         ],
         temperature=0.1,
