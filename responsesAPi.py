@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from openai import AzureOpenAI
+import streamlit as st
 
 load_dotenv()
 AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
@@ -14,11 +15,37 @@ client = AzureOpenAI(
 )
 
 def chat():
-    response = client.responses.create(
-        model=AZURE_OPENAI_DEPLOYMENT,
-        input="If you are stranded on an island, what three items would you want to have with you for entertainment?")
+    st.title(":rainbow[Hami's Chat bot] \U0001F920")
+    st.write("Let's have chat, fam!")
 
-    print(response.output_text)
+    user_input = st.text_input("Your message:")
+
+    if "previous_response_id" not in st.session_state:
+        st.session_state.previous_response_id = None
+
+    tone = "You are an empathetic assistant. Respond warmly and encourage users gently."
+    max_tokens = 300
+    temp = 0.5
+
+    if user_input:
+        with st.spinner("Let me think..."):
+            response = client.responses.create(
+            model=AZURE_OPENAI_DEPLOYMENT,
+            instructions=tone,
+            input= user_input,
+            previous_response_id=st.session_state.previous_response_id,
+            temperature=temp,
+            max_output_tokens=max_tokens
+            )
+    
+        st.markdown(f"Chat: {response.output_text}")
+
+        st.session_state.previous_response_id = response.id
+
+        if hasattr(response, "usage"):
+            usage = response.usage
+            st.markdown(f"**Tokens used: {usage.total_tokens}**")
+
 
 if __name__ == "__main__":
     chat()
