@@ -94,7 +94,31 @@ def input_validation(user_input: str) -> bool:
     return True
 
 def assistant():
-        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+
+    console.print(
+        Panel(
+            "Hi, welcome to Syncy-Lynky's customer support. What can I help you with today?",
+            subtitle="type 'exit' to close the chat",
+            style=f"bold {bot_color}",
+        )
+    )
+    print()
+
+    while True:
+        user_input = input("You: ").strip()
+        print()
+
+        if user_input.lower() == "exit":
+            console.print(
+                Panel("Alright then, have a great day!", style=f"bold {bot_color}")
+            )
+            break
+
+        if not input_validation(user_input):
+            continue
+
+        messages.append({"role": "user", "content": user_input})
 
         try:
             response = client.responses.create(
